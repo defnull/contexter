@@ -6,7 +6,9 @@ Contexter is a full replacement of the :module:`contextlib` standard library mod
 
 To keep it short: Contexter allows you to nest and stack context managers in an easy and intuitive way. It is basically :module:`contextlib` for humans.
 
-Enough talk, let's see an example::
+Enough talk, let's see an example:
+
+.. code:: python
 
     ''' Copy the content of one file to another
          and protect everything with a lock. '''
@@ -16,9 +18,11 @@ Enough talk, let's see an example::
         out_file = ctx << open('b.txt', 'w')
         out_file.write(in_file.read())
 
-Look at that. It's beautiful, isn't it? Let me explain: You call :class:`Contexter` with any number of context managers as arguments and later attach additional managers with the neat `value = ctx << thing` syntax. That's it. Only one level of indentation, no matter how many managers you need.
+Look at that. It's beautiful, isn't it? Let me explain: You call :class:`Contexter` with any number of context managers as arguments and later attach additional managers with the neat ``value = ctx << thing`` syntax. That's it. Only one level of indentation, no matter how many managers you need.
 
-Just for comparison::
+Just for comparison:
+
+.. code:: python
 
     # Python 2.5 and 2.6
     with lock:
