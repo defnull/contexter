@@ -14,15 +14,17 @@ from contextlib import contextmanager
 from functools import wraps
 
 __all__ = ['Contexter']
-__all__ += ['contextmanager', 'nested', 'closing', 'ContextDecorator', 'ExitStack']
+__all__ += ['contextmanager', 'nested', 'closing', 'ContextDecorator',
+            'ExitStack']
 
 
 _not_a_context = TypeError(
     "Only context managers (implementing `__enter__` and `__exit__`)"
     " or objects with a `close` method are supported.")
 
+
 class Contexter(object):
-    __slots__ = '_prepared', '_context_stack', '_active'
+    __slots__ = '_prepared', '_context_stack'
 
     def __init__(self, *contexts):
         self._prepared = list(contexts)
@@ -53,7 +55,7 @@ class Contexter(object):
             self._context_stack[-1].append((context, context))
             return context
         else:
-            raise TypeError()
+            raise _not_a_context
 
     __lshift__ = append
 
@@ -74,7 +76,7 @@ class Contexter(object):
                 elif hasattr(context, 'close'):
                     context.close()
                 else:
-                    raise TypeError("Managed objects must either implement __enter__ and __exit__, or close()")
+                    raise _not_a_context
             except:
                 exc = sys.exc_info()
 
@@ -96,6 +98,7 @@ class _ExitDummy(object):
     def __exit__(self, *ext):
         return self.exit(*exc)
 
+
 class _CloseDummy(object):
     def __init__(self, callback, args, kwds):
         self.callback = callback
@@ -109,50 +112,53 @@ class _CloseDummy(object):
         self.callback(*self.args, **self.kwds)
 
 
-
-
 class ExitStack(Contexter):
-    """Context manager for dynamic management of a stack of exit callbacks."""
+    """ Context manager for dynamic management of a stack of exit callbacks.
+    """
 
     def enter_context(self, cm):
-        """Enters the supplied context manager
+        """ Enters the supplied context manager
 
-        If successful, also pushes its __exit__ method as a callback and
-        returns the result of the __enter__ method.
+            If successful, also pushes its __exit__ method as a callback and
+            returns the result of the __enter__ method.
         """
         return self << cm
 
     def push(self, exit):
-        """Registers a callback with the standard __exit__ method signature
+        """ Registers a callback with the standard __exit__ method signature
 
-        Can suppress exceptions the same way __exit__ methods can.
+            Can suppress exceptions the same way __exit__ methods can.
 
-        Also accepts any object with an __exit__ method (registering a call
-        to the method instead of the object itself)
+            Also accepts any object with an __exit__ method (registering a call
+            to the method instead of the object itself)
         """
         return self << _ExitDummy(exit)
 
     def callback(self, callback, *args, **kwds):
-        """Registers an arbitrary callback and arguments.
+        """ Registers an arbitrary callback and arguments.
 
-        Cannot suppress exceptions.
+            Cannot suppress exceptions.
         """
         return self << _CloseDummy(callback, args, kwds)
 
     def pop_all(self):
-        """Preserve the context stack by transferring it to a new instance"""
+        """ Preserve the context stack by transferring it to a new instance """
         ret = ExitStack()
         ret._context_stack.append(self._context_stack.pop())
         self._context_stack.append([])
 
+
 def closing(thing):
     return Contexter(thing)
+
 
 def nested(*args):
     return Contexter(*args)
 
+
 class ContextDecorator(object):
-    "A base class or mixin that enables context managers to work as decorators."
+    """ A base class or mixin that enables context managers to work as
+        decorators. """
     def __call__(self, func):
         @wraps(func)
         def inner(*args, **kwds):
