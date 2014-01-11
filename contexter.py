@@ -39,7 +39,10 @@ class Contexter(object):
         return [value for context, value in self._context_stack[stack]]
 
     def value(self, index, stack=-1):
-        return self._context_stack[stack][i][1]
+        if isinstance(index, slice):
+            return [x[1] for x in self._context_stack[stack][index]]
+        else:
+            return self._context_stack[stack][index][1]
 
     __getitem__ = value
 
@@ -80,7 +83,6 @@ class Contexter(object):
             except:
                 exc = sys.exc_info()
 
-        self._active = False
         if exc != (None, None, None):
             raise exc[0], exc[1], exc[2]
 
@@ -199,6 +201,30 @@ def test_context_stacks():
         v2 = ctx << TestContext('c')
         assert ctx.values() == ['a','b','c']
         assert v2 == 'c'
+        assert ctx[0:2] == ['a','b']
+        assert ctx[1:2] == ['b']
+        assert ctx[1:] == ['b','c']
+        assert ctx[-1] == 'c'
+        assert ctx[-2:] == ['b','c']
+        assert len(ctx) == 3
 
+    with Contexter() as ctx:
+        a, b, c = map(TestContext, 'abc')
+        assert not a.entered
+        assert not b.entered
+        assert not c.entered
+
+        ctx << a
+        assert a.entered
+
+        with ctx:
+            ctx << b
+            assert a.entered
+            assert b.entered
+            assert not c.entered
+
+        assert a.entered
+        assert b.entered and b.exited
+        assert not c.entered
 
 
