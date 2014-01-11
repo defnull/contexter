@@ -1,6 +1,5 @@
-==============================================
-Contexter: contextlib for humanoids
-==============================================
+Contexter: A better contextlib
+===============================================================================
 
 Contexter is a full replacement of the contextlib_ standard library module. It comes with more features, a nicer API and full support for Python 2.5 up to 3.x from a single source file.
 
@@ -48,28 +47,28 @@ Just for comparison:
 
 
 Replacing contextlib.nested_
-====================================
+-------------------------------------------------------------------------------
 
 You can use ``Contexter(*managers)`` as a drop-in replacement for ``contextlib.nested(*managers)``, just without the `confusing error prone quirks mentioned in the official documentation <contextlib.nested>`_.
 
 Replacing contextlib.closing_
-====================================
+-------------------------------------------------------------------------------
 
 Just forget about it. Contexter turns close-able objects into context managers automatically.
 
 Replacing contextlib.ExitStack_
-======================================
+-------------------------------------------------------------------------------
 
 Contexter offeres everything ``contextlib.ExitStack`` does (and more). If you want a drop-in replacement that also works for Python 2.x and 3.2, you can use our backported ``ExitStack``, a subclass of ``Contexter`` that is API compatible to the contextlib variant.
 
 Replacing everything else from contextlib
-=========================================
+-------------------------------------------------------------------------------
 
 If you really want to stick with the standard API, you can. Contexter implements all public APIs from contextlib and backports new features as soon as they are introduced.
 
 
 More examples:
-=========================================
+-------------------------------------------------------------------------------
 
 Contexter keeps track of the results of all invoked context managers. You can access the results later and don't have to unpack them all at the beginning.
 
@@ -105,7 +104,7 @@ Contexter contexts are nestable. Each level of nesting maintains its own stack o
         assert out_file.closed == False
 
 Links
-======
+-------------------------------------------------------------------------------
 
 .. target-notes::
 

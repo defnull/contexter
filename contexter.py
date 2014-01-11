@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 """
-Contexter is a full replacement of the :module:`contextlib` standard library
+Contexter is a full replacement of the contextlib standard library
 module. It comes with more features, a nicer API and full support for
 Python 2.5 up to 3.x from a single source file.
 """
 
 __author__ = 'Marcel Hellkamp'
-__version__ = '0.1'
+__version__ = '0.1.1'
 __license__ = 'MIT'
 
 import sys
@@ -84,7 +84,7 @@ class Contexter(object):
                 exc = sys.exc_info()
 
         if exc != (None, None, None):
-            raise exc[0], exc[1], exc[2]
+            raise exc
 
     def close(self):
         self.__exit__(None, None, None)
@@ -185,13 +185,11 @@ def test_context_stacks():
             self.exited = False
 
         def __enter__(self):
-            print 'entering', self.name
             self.entered = True
             return self.name
 
         def __exit__(self, *a):
             self.exited = a
-            print 'exiting', self.name, a
 
     with Contexter(TestContext('a')) as ctx:
         assert ctx.values() == ['a']
