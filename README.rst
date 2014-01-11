@@ -1,10 +1,10 @@
 ==============================================
-Contexter: :module:`contextlib` for humanoids
+Contexter: contextlib for humanoids
 ==============================================
 
-Contexter is a full replacement of the :module:`contextlib` standard library module. It comes with more features, a nicer API and full support for Python 2.5 up to 3.x from a single source file.
+Contexter is a full replacement of the contextlib_ standard library module. It comes with more features, a nicer API and full support for Python 2.5 up to 3.x from a single source file.
 
-To keep it short: Contexter allows you to nest and stack context managers in an easy and intuitive way. It is basically :module:`contextlib` for humans.
+To keep it short: Contexter allows you to nest and stack context managers in an easy and intuitive way. It is basically contextlib for humans.
 
 Enough talk, let's see an example:
 
@@ -18,7 +18,7 @@ Enough talk, let's see an example:
         out_file = ctx << open('b.txt', 'w')
         out_file.write(in_file.read())
 
-Look at that. It's beautiful, isn't it? Let me explain: You call :class:`Contexter` with any number of context managers as arguments and later attach additional managers with the neat ``value = ctx << thing`` syntax. That's it. Only one level of indentation, no matter how many managers you need.
+Look at that. It's beautiful, isn't it? Let me explain: You call ``Contexter()`` with any number of context managers as arguments and later attach additional managers with the neat ``value = ctx << thing`` syntax. That's it. Only one level of indentation, no matter how many managers you need.
 
 Just for comparison:
 
@@ -47,23 +47,33 @@ Just for comparison:
         out_file.write(in_file.read())
 
 
-Replacing :func:`contextlib.nested`
+Replacing contextlib.nested_
 ====================================
 
-You can use :class:`Contexter` as a drop-in replacement for :func:`contextlib.nested`, just without the confusing error prone quirks mentioned in the official documentation.
+You can use ``Contexter(*managers)`` as a drop-in replacement for ``contextlib.nested(*managers)``, just without the `confusing error prone quirks mentioned in the official documentation <contextlib.nested>`_.
 
-Replacing :func:`contextlib.closing`
+Replacing contextlib.closing_
 ====================================
 
 Just forget about it. Contexter turns close-able objects into context managers automatically.
 
-Replacing :class:`contextlib.ExitStack`
+Replacing contextlib.ExitStack_
 ======================================
 
-Contexter offeres everything :class:`contextlib.ExitStack` does (and more). If you want a drop-in replacement that also works for Python 2.x and 3.2, you can import :class:`contexter.ExitStack`, a subclass of :class:`contexter.Contexter` that is API compatible to the :module:`contextlib` variant.
+Contexter offeres everything ``contextlib.ExitStack`` does (and more). If you want a drop-in replacement that also works for Python 2.x and 3.2, you can use our backported ``ExitStack``, a subclass of ``Contexter`` that is API compatible to the contextlib variant.
 
-Replacing everything else from :module:`contextlib`
-===================================================
+Replacing everything else from contextlib
+=========================================
 
-If you really want to stick with the standard API, you can. Contexter implements all public APIs from :module:`contextlib` and backports new features as soon as they are introduced.
+If you really want to stick with the standard API, you can. Contexter implements all public APIs from contextlib and backports new features as soon as they are introduced.
+
+Links
+======
+
+.. target-notes::
+
+.. _contextlib: http://docs.python.org/3/library/contextlib.html
+.. _contextlib.nested: http://docs.python.org/2/library/contextlib.html#contextlib.nested
+.. _contextlib.closing: http://docs.python.org/3/library/contextlib.html#contextlib.closing
+.. _contextlib.ExitStack: http://docs.python.org/3/library/contextlib.html#contextlib.ExitStack
 
