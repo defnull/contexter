@@ -6,7 +6,7 @@ Python 2.5 up to 3.x from a single source file.
 """
 
 __author__ = 'Marcel Hellkamp'
-__version__ = '0.1.1'
+__version__ = '0.1.2'
 __license__ = 'MIT'
 
 import sys
