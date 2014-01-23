@@ -46,17 +46,17 @@ Just for comparison:
         out_file.write(in_file.read())
 
 
-Replacing contextlib.nested_
+Replacing `contextlib.nested`_
 -------------------------------------------------------------------------------
 
-You can use ``Contexter(*managers)`` as a drop-in replacement for ``contextlib.nested(*managers)``, just without the `confusing error prone quirks mentioned in the official documentation <contextlib.nested>`_.
+You can use ``Contexter(*managers)`` as a drop-in replacement for ``contextlib.nested(*managers)``, just without the `confusing error prone quirks mentioned in the official documentation <http://docs.python.org/3/library/contextlib.html>`_.
 
-Replacing contextlib.closing_
+Replacing `contextlib.closing`_
 -------------------------------------------------------------------------------
 
 Just forget about it. Contexter turns close-able objects into context managers automatically.
 
-Replacing contextlib.ExitStack_
+Replacing `contextlib.ExitStack`_
 -------------------------------------------------------------------------------
 
 Contexter offeres everything ``contextlib.ExitStack`` does (and more). If you want a drop-in replacement that also works for Python 2.x and 3.2, you can use our backported ``ExitStack``, a subclass of ``Contexter`` that is API compatible to the contextlib variant.
