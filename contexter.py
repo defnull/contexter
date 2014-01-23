@@ -10,12 +10,22 @@ __version__ = '0.1.1'
 __license__ = 'MIT'
 
 import sys
-from contextlib import contextmanager
-from functools import wraps
+import contextlib
+import functools
 
 __all__ = ['Contexter']
 __all__ += ['contextmanager', 'nested', 'closing', 'ContextDecorator',
             'ExitStack']
+
+
+
+if sys.version_info < (3,):
+    def reraise(exc):
+        raise exc[0], exc[1], exc[2]
+else:
+    def reraise(exc):
+        raise exc[1].with_traceback(exc[2])
+
 
 
 _not_a_context = TypeError(
@@ -114,6 +124,9 @@ class _CloseDummy(object):
         self.callback(*self.args, **self.kwds)
 
 
+contextmanager = contextlib.contextmanager
+
+
 class ExitStack(Contexter):
     """ Context manager for dynamic management of a stack of exit callbacks.
     """
@@ -162,7 +175,7 @@ class ContextDecorator(object):
     """ A base class or mixin that enables context managers to work as
         decorators. """
     def __call__(self, func):
-        @wraps(func)
+        @functools.wraps(func)
         def inner(*args, **kwds):
             with self:
                 return func(*args, **kwds)
@@ -170,12 +183,6 @@ class ContextDecorator(object):
 
 
 
-if sys.version_info < (3,):
-    def reraise(exc):
-        raise exc[0], exc[1], exc[2]
-else:
-    def reraise(exc):
-        raise exc[1].with_traceback(exc[2])
 
 
 
