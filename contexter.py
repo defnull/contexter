@@ -107,7 +107,7 @@ class _ExitDummy(object):
     def __enter__(self):
         return self
 
-    def __exit__(self, *ext):
+    def __exit__(self, *exc):
         return self.exit(*exc)
 
 
