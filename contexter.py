@@ -20,8 +20,7 @@ __all__ += ['contextmanager', 'nested', 'closing', 'ContextDecorator',
 
 
 if sys.version_info < (3,):
-    def reraise(exc):
-        raise exc[0], exc[1], exc[2]
+	eval(compile('def reraise(a): raise a[0], a[1], a[2]', '<py3fix>', 'exec'))
 else:
     def reraise(exc):
         raise exc[1].with_traceback(exc[2])
