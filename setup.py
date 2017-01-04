@@ -12,11 +12,11 @@ if sys.version_info < (2,5):
 import contexter
 
 with contexter.Contexter() as ctx:
-    long_description = ''.join(ctx << open('README.rst'))
+    long_description = '  '.join(ctx << open('README.rst')).rstrip()
 
 setup(name='contexter',
       version=contexter.__version__,
-      description=contexter.__doc__,
+      description=contexter.__doc__.replace('\n', '\n  ').rstrip(),
       long_description=long_description,
       author=contexter.__author__,
       author_email='marc@gsites.de',
