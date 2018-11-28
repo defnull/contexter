@@ -33,32 +33,38 @@ _not_a_context = TypeError(
 
 
 class Contexter(object):
+    """ A context-manager manager, designed to make it easy to programmatically
+        combine other context managers and cleanup functions. Additional
+        contexts can be added afte-the-fact and are still cleanded-up as if they
+        were part of the original `with` statement.
+
+        The same context manager can be used in a nested `with` statement and
+        behaves as if a new instance was used: At the end of a nested `with`
+        statement, only the contexts from the inner scope are closed.
+
+        Closeable objects (implement `close()`) can be added directly, without
+        a `contextlib.closing` wrapper.
+    """
     __slots__ = '_prepared', '_context_stack'
 
     def __init__(self, *contexts):
+        """ Create a new context manager with any number of child contexts. """
         self._prepared = list(contexts)
         self._context_stack = []
 
     def __call__(self, *contexts):
+        """ Add any number of additional contexts to the current scope. """
         for context in contexts:
             self << context
         return self
 
-    def values(self, stack=-1):
-        return [value for context, value in self._context_stack[stack]]
-
-    def value(self, index, stack=-1):
-        if isinstance(index, slice):
-            return [x[1] for x in self._context_stack[stack][index]]
-        else:
-            return self._context_stack[stack][index][1]
-
-    __getitem__ = value
-
-    def __len__(self):
-        return len(self._context_stack[-1])
-
     def append(self, context):
+        """ Add a new child context to the current scope.
+
+            @param context: Either a context manager implemeting `__enter__` and
+                `__exit__`, or a closeable object.
+            @return The return value of `__enter__()`, or the closeable itself.
+        """
         if hasattr(context, '__enter__') and hasattr(context, '__exit__'):
             value = context.__enter__()
             self._context_stack[-1].append((context, value))
@@ -70,6 +76,37 @@ class Contexter(object):
             raise _not_a_context
 
     __lshift__ = append
+
+    def values(self, stack=-1):
+        """ Return all context values as a list.
+
+            Return a list of context values (the value returned by
+            `__enter__()`, usually `self`) in the order the context managers
+            were added to this context. If this is a nested context, only return
+            values of the inner-most scope by default.
+
+            @param stack: The scope stack index. (default: -1)
+            @return List of manmaged values.
+        """
+        return [value for context, value in self._context_stack[stack]]
+
+    def value(self, index, stack=-1):
+        """ Return a specific context value.
+
+            @param index: Index within the 'values()' list. May also be a slice.
+            @param stack: The scope stack index. (default: -1)
+            @return List of manmaged values.
+        """
+        if isinstance(index, slice):
+            return [x[1] for x in self._context_stack[stack][index]]
+        else:
+            return self._context_stack[stack][index][1]
+
+    __getitem__ = value
+
+    def __len__(self):
+        """ Number of contexts in the current scope. """
+        return len(self._context_stack[-1])
 
     def __enter__(self):
         self._context_stack.append([])
