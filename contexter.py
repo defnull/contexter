@@ -12,6 +12,7 @@ __license__ = 'MIT'
 import sys
 import contextlib
 import functools
+import warnings
 
 __all__ = ['Contexter']
 __all__ += ['contextmanager', 'nested', 'closing', 'ContextDecorator',
@@ -133,6 +134,7 @@ class Contexter(object):
             reraise(exc)
 
     def close(self):
+        warnings.warn("Do not call close() on a Contexter.", DeprecationWarning)
         self.__exit__(None, None, None)
 
 
@@ -274,5 +276,3 @@ def test_context_stacks():
         assert a.entered
         assert b.entered and b.exited
         assert not c.entered
-
-
